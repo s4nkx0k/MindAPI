@@ -174,6 +174,8 @@
 - Next value
 - Previous value
 - Data Type
+  - Is it a number? Change it to a string
+  - Is it a string? Change it to a number
 - Method -> GET to POST
 
 ###### Duplicate
@@ -181,6 +183,14 @@
 
 ###### Add as an array
 - ?id[]=1&id[]=2
+
+###### Wildcard
+- GET /users/id -> GET /users/*
+
+###### cross-deployments IDs
+- Identify other deployments (hosts) of your target API
+- Enumerate resources IDs (often non- numerical/sequential ones)
+- Test those IDs on your target API host
 
 #### Check the response
 
@@ -252,10 +262,27 @@
 ###### Check that keys and secrets are different between ENV
 
 ##### OAuth
-- Test redirect_uri for open redirects
-- Test redirect_uri for XSS
+- Test redirect_uri
+  - Open redirects
+    - Common issues
+      - `?redirect_uri=https://atttacker.com`
+      - `?redirect_uri=https://ATTACKER.TARGET.TLD`
+      - `?redirect_uri=https://ALLOWED_HOST.com/callback?redirectUrl=https://attacker.com`
+      - `?redirect_uri=https://TARGET.TLD.attacker.com`
+      - `?redirect_uri=https://TARGET.TLD%252eattacker.com`
+      - `?redirect_uri=https://TARGET.TLD//attacker.com/`
+    - Fuzz
+      - `?redirect_uri=https://TARGET.TLD§FUZZ§`
+      - `?redirect_uri=https://§FUZZ§TARGET.TLD`
+  - XSS
 - Test the existence of response_type=token
-- Test CSRF
+- Testing state
+  - Missing state parameter?
+    - CSRF
+      - Generate a valid `authorization_code` and don't use it
+        - Send the crafted CSRF page to TARGET
+  - Predictable state parameter?
+  - Is state parameter being verified?
 
 ##### Basic Auth
 
